@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Gestion_De_Biblioteca.API/Gestion_De_Biblioteca.API.csproj" />
+  <Project Path="Gestion_De_Biblioteca.DataAccess/Gestion_De_Biblioteca.DataAccess.csproj" />
+  <Project Path="Gestion_De_Biblioteca.Domain/Gestion_De_Biblioteca.Domain.csproj" />
+</Solution>
