@@ -1,4 +1,4 @@
-namespace Gestion_De_Biblioteca.Domain.Interfaces;
+namespace Gestion_De_Biblioteca.Domain.Interfaces.Repositories;
 
 public interface IRepository<T> where T : class
 {

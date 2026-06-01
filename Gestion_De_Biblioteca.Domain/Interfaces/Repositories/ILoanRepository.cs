@@ -1,6 +1,6 @@
 using Gestion_De_Biblioteca.Domain.Entities;
 
-namespace Gestion_De_Biblioteca.Domain.Interfaces;
+namespace Gestion_De_Biblioteca.Domain.Interfaces.Repositories;
 
 public interface ILoanRepository : IRepository<Loan>
 {

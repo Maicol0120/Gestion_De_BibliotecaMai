@@ -1,7 +1,7 @@
 using Gestion_De_Biblioteca.API.Dtos;
 using Gestion_De_Biblioteca.Domain.Entities;
 using Gestion_De_Biblioteca.Domain.Enums;
-using Gestion_De_Biblioteca.Domain.Interfaces;
+using Gestion_De_Biblioteca.Domain.Interfaces.Repositories;
 
 namespace Gestion_De_Biblioteca.API.Services;
 

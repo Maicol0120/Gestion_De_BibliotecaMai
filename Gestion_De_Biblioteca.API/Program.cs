@@ -2,7 +2,7 @@ using Gestion_De_Biblioteca.API.Endpoints;
 using Gestion_De_Biblioteca.API.Services;
 using Gestion_De_Biblioteca.DataAccess.Data;
 using Gestion_De_Biblioteca.DataAccess.Repositories;
-using Gestion_De_Biblioteca.Domain.Interfaces;
+using Gestion_De_Biblioteca.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
