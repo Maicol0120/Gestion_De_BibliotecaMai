@@ -5,6 +5,17 @@ namespace Gestion_De_Biblioteca.Domain.Interfaces.Services;
 
 public interface ILibraryService
 {
+    Task<IReadOnlyList<Author>> GetAuthorsAsync();
+    Task<Author?> GetAuthorAsync(int id);
+    Task<Author> CreateAuthorAsync(Author author);
+    Task<Author?> UpdateAuthorAsync(int id, Author author);
+    Task<bool> DeleteAuthorAsync(int id);
+
+    Task<IReadOnlyList<Category>> GetCategoriesAsync();
+    Task<Category?> GetCategoryAsync(int id);
+    Task<Category> CreateCategoryAsync(Category category);
+    Task<Category?> UpdateCategoryAsync(int id, Category category);
+    Task<bool> DeleteCategoryAsync(int id);
 
     Task<IReadOnlyList<Book>> GetBooksAsync();
     Task<Book?> GetBookAsync(int id);

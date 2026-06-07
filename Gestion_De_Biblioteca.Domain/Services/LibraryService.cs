@@ -55,7 +55,7 @@ public class LibraryService(
             return false;
         }
 
-        await authors.DeleteAsync(author);
+        authors.Delete(author);
         await authors.SaveChangesAsync();
         return true;
     }
@@ -102,10 +102,8 @@ public class LibraryService(
         return true;
     }
 
-    public Task<IReadOnlyList<Book>> GetBooksAsync()
-    {
-        return books.GetAllWithDetailsAsync();
-    }
+    public async Task<IReadOnlyList<Book>> GetBooksAsync() =>
+        (await books.GetAllWithDetailsAsync()).ToList();
 
     public Task<Book?> GetBookAsync(int id) => books.GetByIdWithDetailsAsync(id);
 
@@ -305,6 +303,7 @@ public class LibraryService(
             return "Las copias disponibles deben estar entre 0 y el total de copias.";
         }
 
+   
         if (!await authors.ExistsAsync(book.AuthorId) || !await categories.ExistsAsync(book.CategoryId))
         {
             return "El autor o la categoria indicada no existe.";

@@ -7,17 +7,29 @@ namespace Gestion_De_Biblioteca.DataAccess.Repositories;
 
 public class AuthorRepository(LibraryDbContext context) : GenericRepository<Author>(context), IAuthorRepository
 {
-    public async Task<bool> ExistsByNameAsync(string firstName, string lastName) =>
-        await Context.Authors.AnyAsync(author => author.FirstName == firstName && author.LastName == lastName);
+    private new readonly LibraryDbContext _context = context;
 
-    public async Task<bool> ExistsByNameExcludingIdAsync(string firstName, string lastName, int excludeId) =>
-        await Context.Authors.AnyAsync(author =>
-            author.Id != excludeId && author.FirstName == firstName && author.LastName == lastName);
+    public Task<bool> ExistsByNameAsync(string firstName, string lastName) =>
+        _context.Authors.AnyAsync(author => author.FirstName == firstName && author.LastName == lastName);
+
+    public Task<bool> ExistsByNameExcludingIdAsync(string firstName, string lastName, int excludeId) =>
+        _context.Authors.AnyAsync(author => author.Id != excludeId && author.FirstName == firstName && author.LastName == lastName);
 
     public async Task<IEnumerable<Author>> GetWithBooksAsync() =>
-        await Context.Authors
+        await _context.Authors
             .AsNoTracking()
             .Include(author => author.Books)
             .OrderBy(author => author.LastName)
             .ToListAsync();
+
+
+    public new Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public new void Update(Author existingAuthor)
+    {
+        throw new NotImplementedException();
+    }
 }

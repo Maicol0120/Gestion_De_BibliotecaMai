@@ -7,9 +7,11 @@ namespace Gestion_De_Biblioteca.DataAccess.Repositories;
 
 public class CategoryRepository(LibraryDbContext context) : GenericRepository<Category>(context), ICategoryRepository
 {
-    public async Task<bool> ExistsByNameAsync(string name) =>
-        await Context.Categories.AnyAsync(category => category.Name == name);
+    private new readonly LibraryDbContext _context = context;
 
-    public async Task<bool> ExistsByNameExcludingIdAsync(string name, int excludeId) =>
-        await Context.Categories.AnyAsync(category => category.Id != excludeId && category.Name == name);
+    public Task<bool> ExistsByNameAsync(string name) =>
+        _context.Categories.AnyAsync(category => category.Name == name);
+
+    public Task<bool> ExistsByNameExcludingIdAsync(string name, int excludeId) =>
+        _context.Categories.AnyAsync(category => category.Id != excludeId && category.Name == name);
 }

@@ -7,9 +7,11 @@ namespace Gestion_De_Biblioteca.DataAccess.Repositories;
 
 public class MemberRepository(LibraryDbContext context) : GenericRepository<Member>(context), IMemberRepository
 {
-    public async Task<bool> ExistsByEmailAsync(string email) =>
-        await Context.Members.AnyAsync(member => member.Email == email);
+    private new readonly LibraryDbContext _context = context;
 
-    public async Task<bool> ExistsByEmailExcludingIdAsync(string email, int excludeId) =>
-        await Context.Members.AnyAsync(member => member.Id != excludeId && member.Email == email);
+    public Task<bool> ExistsByEmailAsync(string email) =>
+        _context.Members.AnyAsync(member => member.Email == email);
+
+    public Task<bool> ExistsByEmailExcludingIdAsync(string email, int excludeId) =>
+        _context.Members.AnyAsync(member => member.Id != excludeId && member.Email == email);
 }

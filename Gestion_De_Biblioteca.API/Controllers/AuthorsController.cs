@@ -7,37 +7,37 @@ namespace Gestion_De_Biblioteca.API.Controllers;
 
 [ApiController]
 [Route("api/authors")]
-public class AuthorsController(IAuthorService AuthorService) : ControllerBase
+public class AuthorsController(ILibraryService LibraryService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var authors = await AuthorService.GetAuthorsAsync();
+        var authors = await LibraryService.GetAuthorsAsync();
         return Ok(authors.Select(author => author.ToResponse()));
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var author = await AuthorService.GetAuthorAsync(id);
+        var author = await LibraryService.GetAuthorAsync(id);
         return author is null ? NotFound() : Ok(author.ToResponse());
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(AuthorRequestDto request)
     {
-        var author = await AuthorService.CreateAuthorAsync(request.ToEntity());
+        var author = await LibraryService.CreateAuthorAsync(request.ToEntity());
         return CreatedAtAction(nameof(GetById), new { id = author.Id }, author.ToResponse());
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, AuthorRequestDto request)
     {
-        var author = await AuthorService.UpdateAuthorAsync(id, request.ToEntity());
+        var author = await LibraryService.UpdateAuthorAsync(id, request.ToEntity());
         return author is null ? NotFound() : Ok(author.ToResponse());
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id) =>
-        await AuthorService.DeleteAuthorAsync(id) ? NoContent() : NotFound();
+        await LibraryService.DeleteAuthorAsync(id) ? NoContent() : NotFound();
 }
