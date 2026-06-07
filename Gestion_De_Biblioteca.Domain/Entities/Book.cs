@@ -1,3 +1,5 @@
+using Gestion_De_Biblioteca.Domain.Enums;
+
 namespace Gestion_De_Biblioteca.Domain.Entities;
 
 public class Book
@@ -8,6 +10,7 @@ public class Book
     public int PublicationYear { get; set; }
     public int TotalCopies { get; set; }
     public int AvailableCopies { get; set; }
+    public BookStatus Status { get; set; } = BookStatus.Available;
 
     public int AuthorId { get; set; }
     public Author? Author { get; set; }

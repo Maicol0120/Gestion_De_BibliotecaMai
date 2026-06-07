@@ -5,9 +5,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestion_De_Biblioteca.DataAccess.Repositories;
 
-public class BookRepository(LibraryDbContext context) : Repository<Book>(context), IBookRepository
+public class BookRepository(LibraryDbContext context) : GenericRepository<Book>(context), IBookRepository
 {
-    public async Task<IReadOnlyList<Book>> GetAllWithDetailsAsync() =>
+    public async Task<bool> ExistsByIsbnAsync(string isbn) =>
+        await Context.Books.AnyAsync(book => book.Isbn == isbn);
+
+    public async Task<bool> ExistsByIsbnExcludingIdAsync(string isbn, int excludeId) =>
+        await Context.Books.AnyAsync(book => book.Id != excludeId && book.Isbn == isbn);
+
+    public async Task<IEnumerable<Book>> GetByCategoryAsync(int categoryId) =>
+        await Context.Books
+            .AsNoTracking()
+            .Include(book => book.Author)
+            .Include(book => book.Category)
+            .Where(book => book.CategoryId == categoryId)
+            .OrderBy(book => book.Title)
+            .ToListAsync();
+
+    public async Task<IEnumerable<Book>> GetByAuthorAsync(int authorId) =>
+        await Context.Books
+            .AsNoTracking()
+            .Include(book => book.Author)
+            .Include(book => book.Category)
+            .Where(book => book.AuthorId == authorId)
+            .OrderBy(book => book.Title)
+            .ToListAsync();
+
+    public async Task<IEnumerable<Book>> GetAllWithDetailsAsync() =>
         await Context.Books
             .AsNoTracking()
             .Include(book => book.Author)
@@ -15,13 +39,13 @@ public class BookRepository(LibraryDbContext context) : Repository<Book>(context
             .OrderBy(book => book.Title)
             .ToListAsync();
 
-    public async Task<Book?> GetByIdWithDetailsAsync(int id) =>
+    public async Task<Book?> GetWithDetailsAsync(int id) =>
         await Context.Books
             .Include(book => book.Author)
             .Include(book => book.Category)
             .FirstOrDefaultAsync(book => book.Id == id);
 
-    public async Task<IReadOnlyList<Book>> SearchByCategoryAsync(string? category)
+    public async Task<IEnumerable<Book>> GetByCategoryNameAsync(string? category)
     {
         var query = Context.Books
             .AsNoTracking()

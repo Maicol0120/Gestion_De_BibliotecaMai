@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestion_De_Biblioteca.DataAccess.Repositories;
 
-public class LoanRepository(LibraryDbContext context) : Repository<Loan>(context), ILoanRepository
+public class LoanRepository(LibraryDbContext context) : GenericRepository<Loan>(context), ILoanRepository
 {
-    public async Task<IReadOnlyList<Loan>> GetHistoryAsync() =>
+    public async Task<IEnumerable<Loan>> GetAllAsync() =>
         await Context.Loans
             .AsNoTracking()
             .Include(loan => loan.Book)
@@ -15,7 +15,7 @@ public class LoanRepository(LibraryDbContext context) : Repository<Loan>(context
             .OrderByDescending(loan => loan.LoanDate)
             .ToListAsync();
 
-    public async Task<IReadOnlyList<Loan>> GetHistoryByMemberAsync(int memberId) =>
+    public async Task<IEnumerable<Loan>> GetByMemberIdAsync(int memberId) =>
         await Context.Loans
             .AsNoTracking()
             .Include(loan => loan.Book)
@@ -24,9 +24,44 @@ public class LoanRepository(LibraryDbContext context) : Repository<Loan>(context
             .OrderByDescending(loan => loan.LoanDate)
             .ToListAsync();
 
-    public async Task<Loan?> GetByIdWithDetailsAsync(int id) =>
+    public async Task<IEnumerable<Loan>> GetByBookIdAsync(int bookId) =>
+        await Context.Loans
+            .AsNoTracking()
+            .Include(loan => loan.Book)
+            .Include(loan => loan.Member)
+            .Where(loan => loan.BookId == bookId)
+            .OrderByDescending(loan => loan.LoanDate)
+            .ToListAsync();
+
+    public async Task<IEnumerable<Loan>> GetActiveLoansAsync() =>
+        await Context.Loans
+            .AsNoTracking()
+            .Include(loan => loan.Book)
+            .Include(loan => loan.Member)
+            .Where(loan => !loan.ReturnDate.HasValue)
+            .OrderByDescending(loan => loan.LoanDate)
+            .ToListAsync();
+
+    public async Task<IEnumerable<Loan>> GetOverdueLoansAsync()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        return await Context.Loans
+            .AsNoTracking()
+            .Include(loan => loan.Book)
+            .Include(loan => loan.Member)
+            .Where(loan => !loan.ReturnDate.HasValue && loan.DueDate < today)
+            .OrderByDescending(loan => loan.LoanDate)
+            .ToListAsync();
+    }
+
+    public async Task<Loan?> GetWithDetailsAsync(int id) =>
         await Context.Loans
             .Include(loan => loan.Book)
             .Include(loan => loan.Member)
             .FirstOrDefaultAsync(loan => loan.Id == id);
+
+    public async Task<bool> HasActiveLoanAsync(int memberId, int bookId) =>
+        await Context.Loans.AnyAsync(loan =>
+            loan.MemberId == memberId && loan.BookId == bookId && !loan.ReturnDate.HasValue);
 }

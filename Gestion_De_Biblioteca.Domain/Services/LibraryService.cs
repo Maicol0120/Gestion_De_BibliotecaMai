@@ -6,10 +6,10 @@ using Gestion_De_Biblioteca.Domain.Interfaces.Services;
 namespace Gestion_De_Biblioteca.Domain.Services;
 
 public class LibraryService(
-    IRepository<Author> authors,
-    IRepository<Category> categories,
+    IAuthorRepository authors,
+    ICategoryRepository categories,
     IBookRepository books,
-    IRepository<Member> members,
+    IMemberRepository members,
     ILoanRepository loans) : ILibraryService
 {
     private const decimal DailyLateFee = 1000m;
@@ -38,7 +38,9 @@ public class LibraryService(
         existingAuthor.FirstName = author.FirstName.Trim();
         existingAuthor.LastName = author.LastName.Trim();
         existingAuthor.Nationality = author.Nationality?.Trim();
+        existingAuthor.Biography = author.Biography?.Trim();
         existingAuthor.BirthDate = author.BirthDate;
+        existingAuthor.UpdatedAt = DateTime.UtcNow;
 
         authors.Update(existingAuthor);
         await authors.SaveChangesAsync();
@@ -53,7 +55,7 @@ public class LibraryService(
             return false;
         }
 
-        authors.Delete(author);
+        await authors.DeleteAsync(author);
         await authors.SaveChangesAsync();
         return true;
     }
@@ -100,7 +102,10 @@ public class LibraryService(
         return true;
     }
 
-    public Task<IReadOnlyList<Book>> GetBooksAsync() => books.GetAllWithDetailsAsync();
+    public Task<IReadOnlyList<Book>> GetBooksAsync()
+    {
+        return books.GetAllWithDetailsAsync();
+    }
 
     public Task<Book?> GetBookAsync(int id) => books.GetByIdWithDetailsAsync(id);
 
@@ -142,6 +147,7 @@ public class LibraryService(
         existingBook.PublicationYear = book.PublicationYear;
         existingBook.TotalCopies = book.TotalCopies;
         existingBook.AvailableCopies = book.AvailableCopies;
+        existingBook.Status = book.Status;
         existingBook.AuthorId = book.AuthorId;
         existingBook.CategoryId = book.CategoryId;
 
@@ -312,6 +318,7 @@ public class LibraryService(
         author.FirstName = author.FirstName.Trim();
         author.LastName = author.LastName.Trim();
         author.Nationality = author.Nationality?.Trim();
+        author.Biography = author.Biography?.Trim();
     }
 
     private static void TrimCategory(Category category)

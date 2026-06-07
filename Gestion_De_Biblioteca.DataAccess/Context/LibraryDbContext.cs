@@ -1,4 +1,5 @@
 using Gestion_De_Biblioteca.Domain.Entities;
+using Gestion_De_Biblioteca.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestion_De_Biblioteca.DataAccess.Data;
@@ -20,6 +21,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             entity.Property(author => author.FirstName).HasMaxLength(80).IsRequired();
             entity.Property(author => author.LastName).HasMaxLength(80).IsRequired();
             entity.Property(author => author.Nationality).HasMaxLength(80);
+            entity.Property(author => author.Biography).HasMaxLength(1000);
+            entity.Property(author => author.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -36,6 +39,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             entity.Property(book => book.Isbn).HasMaxLength(20).IsRequired();
             entity.Property(book => book.TotalCopies).HasDefaultValue(1);
             entity.Property(book => book.AvailableCopies).HasDefaultValue(1);
+            entity.Property(book => book.Status).HasConversion<int>().HasDefaultValue(BookStatus.Available);
 
             entity.HasOne(book => book.Author)
                 .WithMany(author => author.Books)
