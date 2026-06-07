@@ -1,8 +1,9 @@
-using Gestion_De_Biblioteca.API.Endpoints;
-using Gestion_De_Biblioteca.API.Services;
+using Gestion_De_Biblioteca.API.Middlewares;
 using Gestion_De_Biblioteca.DataAccess.Data;
 using Gestion_De_Biblioteca.DataAccess.Repositories;
 using Gestion_De_Biblioteca.Domain.Interfaces.Repositories;
+using Gestion_De_Biblioteca.Domain.Interfaces.Services;
+using Gestion_De_Biblioteca.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -28,8 +30,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapGet("/", () => Results.Redirect("/swagger"));
-app.MapLibraryEndpoints();
+app.MapControllers();
 
 app.Run();

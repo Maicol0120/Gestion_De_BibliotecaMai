@@ -1,4 +1,4 @@
-namespace Gestion_De_Biblioteca.API.Services;
+namespace Gestion_De_Biblioteca.Domain.Services;
 
 public record ServiceResult<T>(bool Success, T? Data, string? Error)
 {

@@ -1,0 +1,43 @@
+using Gestion_De_Biblioteca.API.DTOs.Request;
+using Gestion_De_Biblioteca.API.Mappings;
+using Gestion_De_Biblioteca.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Gestion_De_Biblioteca.API.Controllers;
+
+[ApiController]
+[Route("api/categories")]
+public class CategoriesController(ILibraryService libraryService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var categories = await libraryService.GetCategoriesAsync();
+        return Ok(categories.Select(category => category.ToResponse()));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var category = await libraryService.GetCategoryAsync(id);
+        return category is null ? NotFound() : Ok(category.ToResponse());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CategoryRequestDto request)
+    {
+        var category = await libraryService.CreateCategoryAsync(request.ToEntity());
+        return CreatedAtAction(nameof(GetById), new { id = category.Id }, category.ToResponse());
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, CategoryRequestDto request)
+    {
+        var category = await libraryService.UpdateCategoryAsync(id, request.ToEntity());
+        return category is null ? NotFound() : Ok(category.ToResponse());
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id) =>
+        await libraryService.DeleteCategoryAsync(id) ? NoContent() : NotFound();
+}
