@@ -23,13 +23,16 @@ public class AuthorRepository(LibraryDbContext context) : GenericRepository<Auth
             .ToListAsync();
 
 
-    public new Task SaveChangesAsync()
+
+  public new async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+      
+        await _context.SaveChangesAsync();
     }
 
     public new void Update(Author existingAuthor)
     {
-        throw new NotImplementedException();
+        
+        _context.Authors.Update(existingAuthor);
     }
 }
